@@ -1,23 +1,22 @@
-import express, { Request, Response } from "express";
+import 'reflect-metadata';
+import express from 'express';
+import { useExpressServer } from 'routing-controllers';
+import {config} from './utils/config';
 
 class App{
     private app: express.Application = express();
+    private port: Number = Number(config('APP_PORT'));
 
-    /**
-     * constructor
-     */
     public constructor() {
-        this.deneme();
+        this.startup();
     }
 
-    public deneme(){
-        this.app.get("/", (req: Request, res: Response) => {
-            res.send("Hello World");
-          });
-          
-        this.app.listen(5000, () => console.log("Server listening on http://localhost:5000"));
+    public startup(){
+        useExpressServer(this.app,{
+            cors: false,
+            controllers: [__dirname + '/controllers/{*.ts,*.js}'],
+        }).listen(this.port, () => console.log(`Listening ${this.port}`));
     }
 }
 
 new App();
-
